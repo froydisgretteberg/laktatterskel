@@ -28,6 +28,9 @@ plot(pressure)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
+```{r}
+
+```
 
 
 
@@ -36,8 +39,9 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 ```{r}
 library(readxl)
-lac_data <- read_excel("data/lac_data.xlsx", na = "NA") %>%
-  print()
+lac_data <- read_excel("data/lac_data.xlsx")
+print()
+
 
 lac_data %>%
   filter(time == "pre") %>%
