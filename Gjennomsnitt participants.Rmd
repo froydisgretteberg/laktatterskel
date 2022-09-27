@@ -38,3 +38,45 @@ lac_data %>%
              sex = "Sex") 
 ```
 
+
+
+```{r}
+#| message: false
+#| warning: false
+#| echo: false
+
+
+lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
+
+
+lac_data %>%
+  select(FP, sex, time, watt_4mmol, HF_4mmol) %>%
+  pivot_wider(names_from = time, 
+              values_from = c(watt_4mmol, HF_4mmol)) %>%
+  
+  mutate(watt_diff = watt_4mmol_post - watt_4mmol_pre, 
+         hf_diff = HF_4mmol_post - HF_4mmol_pre) %>%
+  
+  group_by(sex) %>%
+
+  
+  summarise(watt.s = sd(watt_diff, na.rm = TRUE), 
+            hf.s = sd(hf_diff, na.rm = TRUE),
+            watt.m = mean(c(watt_4mmol_pre, watt_4mmol_post), na.rm = TRUE), 
+            hf.m = mean(c(HF_4mmol_pre, HF_4mmol_post), na.rm = TRUE), 
+            watt.te = watt.s / sqrt(2), 
+            hf.te = hf.s / sqrt(2), 
+            watt.cv = 100 * (watt.te / watt.m), 
+            hf.cv = 100 * (hf.te / hf.m), 
+            n = n()) %>%
+  
+  print()
+
+
+
+```
+
+
+
+
+
