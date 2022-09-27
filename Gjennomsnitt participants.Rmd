@@ -2,13 +2,19 @@
 title: "denen skal funke"
 output: html_document
 date: "2022-09-26"
+editor_options: 
+  chunk_output_type: console
 ---
 
-```{r setup, include=FALSE}
+```{r setup}
+#| echo: false
+#| warning: false
+#| message: false
 
-library(readxl)
+
+library(readxl); library(tidyverse); library(gt)
 lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
-View(lac_data)
+
 
 
 lac_data %>%
@@ -29,10 +35,6 @@ lac_data %>%
              MeanWeight = "Weight",
              sdWeight = "",
              n = "Participants",
-             sex = "Sex") %>%
-  print()
-
-
-
+             sex = "Sex") 
 ```
 
