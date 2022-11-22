@@ -3,6 +3,7 @@ title: "Assignment 1"
 output: html_document
 date: "2022-09-26"
 ---
+#Laktatterskel - sykkel
 
 ```{r setup, include=FALSE}
 lac_data %>%
@@ -12,7 +13,11 @@ lac_data %>%
 ```
 
 
+#Gjennomsnitt
+Gjennomsnitt av resultatene ved 4mmol laktat. Laktat eller melkesyre i blodet refereres til mangel på oksygentilførsel til deler av kroppen under arbeid (Vinnes, 2022). Laktatterskel kan eksempelvis forklare hvilken intensitet du kan holde over en gitt periode, og unngå utmattelse. 
+
 ```{r setup, include=FALSE}
+lac_data %>%
 summarise(MeanAge = mean(age),
             sdAge = sprintf("(%.2f)", sd(age)),
             MeanWatt_4mmol = mean(watt_4mmol),
@@ -27,8 +32,51 @@ summarise(MeanAge = mean(age),
              MeanHF_4mmol = "HF_4mmol",
              sdHF_4mmol = "",
              n = "Participants",
-             sex = "Sex") %>%
-  print()
-
+             sex = "Sex")
 
 ```
+
+
+# Gjennomsnitt av deltakere
+```{r}
+library(readxl)
+lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
+View(lac_data)
+
+lac_data %>%
+  filter(time == "pre") %>%
+  select(FP, sex, age, weight, height) %>%
+  group_by(sex) %>%
+  summarise(MeanAge = mean(age),
+            sdAge = sprintf("(%.2f)", sd(age)),
+            MeanHeight = mean(height),
+            sdHeight = sprintf("(%.2f)", sd(height)),
+            MeanWeight = mean(weight),
+            sdWeight = sprintf("(%.2f)", sd(weight)), n = n()) %>%
+  gt(caption = "Subjects") %>%
+  cols_label(MeanAge = "Age",
+             sdAge = "",
+             MeanHeight = "Height",
+             sdHeight = "",
+             MeanWeight = "Weight",
+             sdWeight = "",
+             n = "Participants",
+             sex = "Sex")
+```
+
+#Watt ved 4mmol
+Fordeling basert på deltaker og kjønn.
+```{r}
+library(ggplot2)
+library(tidyverse)
+
+lac_data %>% 
+  mutate(time = factor(time, levels = 
+                  c("pre", "post"))) %>%
+  ggplot(aes(y = watt_4mmol, 
+             x = time,
+             color = sex)) + 
+  geom_point() 
+```
+
+
