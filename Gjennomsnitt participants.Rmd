@@ -4,7 +4,10 @@ output: html_document
 date: "2022-09-26"
 ---
 
-```{r setup, include=FALSE}
+```{r setup, echo=FALSE}
+
+
+
 
 library(readxl)
 lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
@@ -33,6 +36,14 @@ lac_data %>%
   print()
 
 
+
+```
+
+
+
+
+
+```{r}
 
 ```
 
