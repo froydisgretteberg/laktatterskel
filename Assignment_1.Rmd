@@ -9,7 +9,7 @@ bibliography: references.bib
 
 # Introduksjon
 
-Laktatterskel, også kjent som anaerob terskel er den høyeste arbeidsintensiteten der mengden laktat(også kalt melkesyre) som produseres og fjernes er lik. Under fysisk aktivitet frigjøres energi i kroppen både gjennom aerobe og anaerobe prosesser. Ved arbeid over en viss intensitet produseres også laktat i tillegg til energi, desto høyere intesitet, desto større er laktatproduksjonen [@dahl2005]. Laktatterskelen er altså den høyeste intensiteten en kan holde før konsentrasjonen av laktat overskrider fjerningen av laktat  
+Laktatterskel, også kjent som anaerob terskel er den høyeste arbeidsintensiteten der mengden laktat(også kalt melkesyre) som produseres og fjernes er lik. Under fysisk aktivitet frigjøres energi i kroppen både gjennom aerobe og anaerobe prosesser. Ved arbeid over en viss intensitet produseres også laktat i tillegg til energi, desto høyere intesitet, desto større er laktatproduksjonen [@dahl2005]. Laktatterskelen er altså den høyeste intensiteten en kan holde før konsentrasjonen av laktat overskrider fjerningen av laktat [@brooks1986]. 
 
 Hensikten med denne oppgaven er å presentere målinger for reliabilitet av data innhentet på fysiologilab. Videre vil oppgaven ta for seg reliabilteten for reproduserbarhet i datavitenskap. Laktatterskel kan være en gunstig indikator for evnen til å yte maksimalt i utholdenhetsidretter. Testing av laktatterskel kan utføres på flere ulike måter, men mest brukt er måling ved 4mmol/L. Videre finnes det ulike måter å justere selve testingen, ved eksempelvis å utføre test på sykkel, tredemølle eller rulleski. Testen kan deretter påvirkes av lengde på intervall og lokasjon for hvor prøvene blir tatt[@faude2009].
 
@@ -26,7 +26,7 @@ Testleder og assistent gjorde klar biosen, neseklypen, kalibrerte og satt samme 
 Ved måling av laktatprofil ble det angitt en gitt Watt (75-125) til å starte med. Testpersonen ble også i starten informert om at tråkkfrekvensen skulle ligge på mellom 70-100rpm. Det ble kjørt 5 minutters intervaller, hvor de første 1.5 minuttene ble kjørt uten noe ekstra utstyr, før deltakeren tok inn et munnstykke og satte på neseklype. Det ble gjort jevnlige målinger, og disse hadde assistenten ansvar for å skrive ned fra 2.5 minutt til 4.5 minutt. Testpersonen ble bedt om å gjøre seg opp en mening om hvor slitne de følte seg ut ifra BORG-skala, før det så ble tatt en prøve i fingeren for å måle laktatverdiene. Etter at prøven ble tatt økte motstanden i Watt, og et nytt intervall startet. Dette gjentok seg til testpersonen nådde 4mmol/L.
 
 ## Innhenting av datasett
-Datasettet er lastet inn fra excel til R. 
+Datasettet er lastet inn fra excel til Rstudio ved bruk av readxl-pakken i Rstudio.
 
 ```{r}
 #| message: false
