@@ -2,45 +2,79 @@
 title: "Assignment 1"
 output: html_document
 date: "2022-09-26"
+editor_options: 
+  chunk_output_type: console
+bibliography: references.bib
 ---
-#Laktatterskel - sykkel
 
+# Introduksjon
 
+Hensikten med denne oppgaven er å presentere målinger for reliabilitet av data innhentet på fysiologilab. Videre vil oppgaven ta for seg reliabilteten for reproduserbarhet i datavitenskap. Laktatterskel kan være en gunstig indikator for evnen til å yte maksimalt i utholdenhetsidretter. Testing av laktatterskel kan utføres på flere ulike måter, men mest brukt er måling ved 4mmol/L. Videre finnes det ulike måter å justere selve testingen, ved eksempelvis å utføre test på sykkel, tredemølle eller rulleski. Testen kan deretter påvirkes av lengde på intervall og lokasjon for hvor prøvene blir tatt[@faude2009].
+
+Denne oppgaven tar for seg resultater som ble gjennomført via testing på sykkel, og vil fokusere på watt og hjertefrekvens ved 4mmol.
+
+# Metode
+
+I denne oppgaven er det brukt en kombinasjon av innhentede data fra idrettsstudenter ved HINN og et allerde eksisterende datasett "lactate threshold tests". Data som ble innhentet av studenter ble gjennomført i en periode på 1-4 testdager. Flere av studentene gjennomførte pre og post test samme dag. Under noen av testdagene var det feil med BIOSEN, som førte til unøyaktig målinger. Dataene som ble innhentet av studenter var fra tester som ble gjennomført samme dag. Før selve testen ble gjennomført fulgte testleder og assistent en planlagt protokoll.
+
+Testleder og assistent gjorde klar biosen, neseklypen, kalibrerte og satt samme munnstykket før testen. Før teststart ble forsøkspersoners navn, alder, fødselsdato, kjønn, høyde og vekt (med minst mulig tøy, 300g trekt fra) lagt inn på dataen. Deretter ble sykkelen (sport excalibur) tilpasset forsøkspersonene og byttet til riktig pedal i forhold til sykkelskoene. Forsøkspersonene ble informert om gjennomføringen av testen samt BORG skalaen som ble tatt i bruk under testen. Testen ble gjennomført på .... «navn på sykkelen» \... uten oppvarming. Hvert drag varte i 5 min og ved 4:30 ble forsøkspersonene spurt hvor på BORG skalaen personen befinner seg og det ble tatt laktat ved stikk i fingeren.
+
+Ved måling av laktatprofil ble det angitt en gitt Watt (75-125) til å starte med. Testpersonen ble også i starten informert om at tråkkfrekvensen skulle ligge på mellom 70-100rpm. Det ble kjørt 5 minutters intervaller, hvor de første 1.5 minuttene ble kjørt uten noe ekstra utstyr, før deltakeren tok inn et munnstykke og satte på neseklype. Det ble gjort jevnlige målinger, og disse hadde assistenten ansvar for å skrive ned fra 2.5 minutt til 4.5 minutt. Testpersonen ble bedt om å gjøre seg opp en mening om hvor slitne de følte seg ut ifra BORG-skala, før det så ble tatt en prøve i fingeren for å måle laktatverdiene. Etter at prøven ble tatt økte motstanden i Watt, og et nytt intervall startet. Dette gjentok seg til testpersonen nådde 4mmol/L.
+
+## Innhenting av datasett
+
+```{r}
+library(tidyverse)
+library(readxl)
+lac_data <- read_excel("data/lac_data.xlsx")
+View(lac_data)
+```
+
+### Gruppering av datasett
 
 ```{r}
 lac_data %>%
   filter(time == "pre") %>%
   select(FP, sex, age, watt_4mmol, HF_4mmol) %>%
   group_by(sex) %>%
+  print()
 ```
 
+# Resultater
 
-#Gjennomsnitt
-Gjennomsnitt av resultatene ved 4mmol laktat. Laktat eller melkesyre i blodet refereres til mangel på oksygentilførsel til deler av kroppen under arbeid (Vinnes, 2022). Laktatterskel kan eksempelvis forklare hvilken intensitet du kan holde over en gitt periode, og unngå utmattelse. 
+## Gjennomsnitt ved 4mmol/L
 
-```{r setup, include=FALSE}
-lac_data %>%
-summarise(MeanAge = mean(age),
-            sdAge = sprintf("(%.2f)", sd(age)),
-            MeanWatt_4mmol = mean(watt_4mmol),
-            sdWatt_4mmol = sprintf("(%.2f)", sd(watt_4mmol)),
-            MeanHF_4mmol = mean(HF_4mmol),
-            sdHF_4mmol = sprintf("(%.2f)", sd(HF_4mmol)), n = n()) %>%
-  gt(caption = "Subjects") %>%
-  cols_label(MeanAge = "Age",
-             sdAge = "",
-             MeanWatt_4mmol = "Watt_4mmol",
-             sdWatt_4mmol = "",
-             MeanHF_4mmol = "HF_4mmol",
-             sdHF_4mmol = "",
-             n = "Participants",
-             sex = "Sex")
+Gjennomsnitt av resultatene ved 4mmol laktat. Laktat eller melkesyre i blodet refereres til mangel på oksygentilførsel til deler av kroppen under arbeid (Vinnes, 2022). Laktatterskel kan eksempelvis forklare hvilken intensitet du kan holde over en gitt periode, og unngå utmattelse.
 
-```
-
-
-# Gjennomsnitt av deltakere
 ```{r}
+#| include: TRUE
+#| echo: FALSE
+#| tbl-cap: "Gjennomsnitt ved 4mmol|L"
+
+library(readxl)
+lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
+View(lac_data)
+
+lac_data %>% 
+summarise(MeanAge = mean(age, na.rm = TRUE), 
+          sdAge = sprintf ("%.2f", sd(age, na.rm = TRUE)),
+          MeanWatt_4mmol = mean (watt_4mmol, na.rm = TRUE),
+          sdwatt_4mmol = sprintf("(%.2f)", sd(watt_4mmol, na.rm = TRUE)),
+          MeanHF_4mmol = mean (HF_4mmol, na.rm = TRUE),
+          sdHF_4mmol = sprintf("(%.2f)", sd(HF_4mmol, na.rm = TRUE)), n = n())
+gt(caption = "Subjects") %>%
+cols_label(MeanAge = "Age",
+             sdAge = "Age",
+             MeanWatt_4mmol = "Watt_4mmol",
+             sdWatt_4mmol = "Watt_4mmol",
+             MeanHF_4mmol = "HF_4mmol",
+             sdHF_4mmol = "HF_4mmol")
+```
+
+## Gjennomsnitt av deltakere
+
+```{r}
+#|tbl-cap: "Gjennomsnitt av deltakere, fordelt på kjønn, alder, høyde, vekt"
 library(readxl)
 lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
 View(lac_data)
@@ -66,11 +100,13 @@ lac_data %>%
              sex = "Sex")
 ```
 
-#Watt ved 4mmol
-Fordeling basert på deltaker og kjønn.
+## Watt ved 4mmol/L
+
+Fordeling basert på deltaker og kjønn. Basert på deres resultater ved pre- og post-testing.
+
 ```{r}
-library(ggplot2)
-library(tidyverse)
+lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
+View(lac_data)
 
 lac_data %>% 
   mutate(time = factor(time, levels = 
@@ -81,24 +117,31 @@ lac_data %>%
   geom_point() 
 ```
 
+## Fordeling ved 4mmol/L
 
-#Watt og hjertefrekvens ved 4mmol
+### Watt
+
+Gjennomsnittet for deltakerne var 176 watt. Standardavviket var 19.1 og typical error 13.5. Koeffisienten var 7.70.
+
+### Hjertefrekvens
+
+Gjennomsnittet for deltakerne var 160. Standardavviket var 4.32 og typical error 3.06. Koeffisienten var 1.91.
+
 ```{r}
 #| message: false
 #| warning: false
 #| echo: false
 
-
 lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
 lac_data %>%
-  select(FP, sex, time, watt_4mmol, HF_4mmol) %>%
+  select(FP, time, watt_4mmol, HF_4mmol) %>%
   pivot_wider(names_from = time, 
               values_from = c(watt_4mmol, HF_4mmol)) %>%
   
   mutate(watt_diff = watt_4mmol_post - watt_4mmol_pre, 
          hf_diff = HF_4mmol_post - HF_4mmol_pre) %>%
   
-  group_by(sex) %>%
+  group_by() %>%
   
   summarise(watt.s = sd(watt_diff, na.rm = TRUE), 
             hf.s = sd(hf_diff, na.rm = TRUE),
@@ -112,3 +155,18 @@ lac_data %>%
 
 ```
 
+# Diskusjon og reliabilitet
+
+Resultatet viste først «NA», fordi det lå «NA» i det eksisterende datasettet. Dette ble endret slik at resultat for watt ved 4mmol/L ble et standardavvik på 19,1, et gjennomsnitt på 176 og typical error på 13,5. Dersom resultatet omhandlet endringene i gjennomsnittet er under eller lik typical error, er ikke testen/resultatene til å stole på/reliable [@hopkins2000] (s.11). Ut fra dette utsagnet fra Hopkins (2000) kan vi si at våre resultater er til å stole på. Vi kan med fordel ha hatt en gjennomgang av testen med alle forsøkspersonene i forkant for å minske læringseffekten. Ut ifra Hopkins (2000) hadde flere forsøkspersoner i testen gitt et bedre resultat og testen kunne blitt mer reliabel [@hopkins2000] (s.10). Noen av studentene fikk unøyaktig målinger grunnet mangel på oksygenopptak, mangel på pulsbelte og feil med BIOSEN. Disse testresultatene ble ekskludert fra rapporten.
+
+### Reliabilitet
+
+Ut fra Hopkins (2000) kan det tenkes at de to viktigste synspunktene for feil ved måling er validiteten underveis i testen og pålitelighet til eventuelle retester [@hopkins2000] (s.1). I tillegg uttaler Hopkins (2000) at de viktigste målingene etter en test er typiske feil, også kalt typical error, og endringene i gjennomsnittet mellom hver test (pre -- post) [\@hopkins2000](s.10).  Videre påpeker Hopkins (2000) at det er tre måter å måle reliabiliteten på; «within-subject variation», «change in the mean» og «retest correlation». Måling av påliteligheten av en test kan gjøres ved å utføre testen et bestemt antall ganger på et bestemt antall forsøkspersoner. Desto mindre feil en test har, jo mer målbart er den [@hopkins2000] (s.2). 
+
+#### [Hvilke mål av reliabilitet har vi brukt?]{.underline}
+
+Vi har tatt i bruk metodene fra Hopkins (2000) for å måle reliabiliteten. Den ene metoden vi har brukt kalles «within-subject variation». Denne metoden omhandler tilfeldige variasjoner og det finnes statistikk som fanger opp disse tilfeldige variasjonene av enkeltpersoners resultater i en retestet test. Dette omtales ofte som standardavvik og representerer typical error, i en måling [@hopkins2000] (s. 2). Utregningen av typical error gjøres ved å dele standardavviket på kvadratroten av 2 [\@hopkins2000](s.%203). Det finnes ulike typer kilder til typical error i en måling, derav biologiske faktorer. Forsøkspersonene kan ha ulik fysisk- og mental tilstand under de ulike testene som kan være med på å påvirke resultatet.  Hopkins (2000) påpeker også at det er ideelt at det i en test er mange forsøkspersoner og få prøver/re-tester [\@hopkins2000](s.%202). 
+
+Den andre metoden vi har brukt omhandler endring av gjennomsnittet. Endringene kan både være tilfeldige endringer eller systematiske endringer. Hopkins (2000) forteller at systematiske endringer i gjennomsnittet kan påvirkes av forsøkspersonenes økte læringseffekt fra første til andre gjennomføring av testen. Videre påpeker Hopkins (2000) at det er ideelt å utføre nok tester slik at læringseffekten eller andre systematiske endringer blir ubetydelig før intervensjonen. De systematiske endringene i gjennomsnittet kan påvirke enkeltindividers resultat som igjen kan øke typical error [\@hopkins2000](s.%205). Det er dermed viktig med god planlegging før en test for å eliminere så mye som mulig av læringseffekten. Det er flere faktorer som kan påvirke resultatene, hvor blant annet forsøkspersonenes motivasjon kan påvirke resultatene ved at de enten får mer eller mindre motivasjon. De kan også få en opplevelse av fatigue fra forrige test som kan være med å påvirke resultatene [\@hopkins2000](s.%205). Ulike testledere, ulikt utstyr og ulike omgivelser er også faktorer som kan påvirke resultatene [\@hopkins2000](s.%202). 
+
+Til slutt har vi metoden omhandlet retesting. Hopkins (2000) viser til tanken om å utføre testen to ganger på ulik tid på samme forsøksperson, for å finne ut om resultatet er tilnærmet likt [\@hopkins2000](s.%206). Desto nærmere resultatene er, jo mer reliabel er testen. 
