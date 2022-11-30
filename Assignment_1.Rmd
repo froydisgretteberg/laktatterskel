@@ -22,17 +22,26 @@ Testleder og assistent gjorde klar biosen, neseklypen, kalibrerte og satt samme 
 Ved måling av laktatprofil ble det angitt en gitt Watt (75-125) til å starte med. Testpersonen ble også i starten informert om at tråkkfrekvensen skulle ligge på mellom 70-100rpm. Det ble kjørt 5 minutters intervaller, hvor de første 1.5 minuttene ble kjørt uten noe ekstra utstyr, før deltakeren tok inn et munnstykke og satte på neseklype. Det ble gjort jevnlige målinger, og disse hadde assistenten ansvar for å skrive ned fra 2.5 minutt til 4.5 minutt. Testpersonen ble bedt om å gjøre seg opp en mening om hvor slitne de følte seg ut ifra BORG-skala, før det så ble tatt en prøve i fingeren for å måle laktatverdiene. Etter at prøven ble tatt økte motstanden i Watt, og et nytt intervall startet. Dette gjentok seg til testpersonen nådde 4mmol/L.
 
 ## Innhenting av datasett
+Datasettet er lastet inn fra excel til R. 
 
 ```{r}
+#| message: false
+#| warning: false
+#| echo: false
 library(tidyverse)
 library(readxl)
+library(gt)
 lac_data <- read_excel("data/lac_data.xlsx")
 View(lac_data)
 ```
 
-### Gruppering av datasett
+
 
 ```{r}
+#| message: false
+#| include: false
+#| warning: false
+#| echo: false
 lac_data %>%
   filter(time == "pre") %>%
   select(FP, sex, age, watt_4mmol, HF_4mmol) %>%
@@ -48,6 +57,7 @@ Gjennomsnitt av resultatene ved 4mmol laktat. Laktat eller melkesyre i blodet re
 
 ```{r}
 #| include: TRUE
+#| warning: FALSE
 #| echo: FALSE
 #| tbl-cap: "Gjennomsnitt ved 4mmol|L"
 
@@ -55,27 +65,32 @@ library(readxl)
 lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
 View(lac_data)
 
-lac_data %>% 
-summarise(MeanAge = mean(age, na.rm = TRUE), 
-          sdAge = sprintf ("%.2f", sd(age, na.rm = TRUE)),
-          MeanWatt_4mmol = mean (watt_4mmol, na.rm = TRUE),
+dat <- lac_data %>% 
+  
+group_by(time) %>% 
+summarise(MeanWatt_4mmol = mean (watt_4mmol, na.rm = TRUE),
           sdwatt_4mmol = sprintf("(%.2f)", sd(watt_4mmol, na.rm = TRUE)),
           MeanHF_4mmol = mean (HF_4mmol, na.rm = TRUE),
           sdHF_4mmol = sprintf("(%.2f)", sd(HF_4mmol, na.rm = TRUE)), n = n())
+
+dat %>% 
 gt(caption = "Subjects") %>%
-cols_label(MeanAge = "Age",
-             sdAge = "Age",
-             MeanWatt_4mmol = "Watt_4mmol",
-             sdWatt_4mmol = "Watt_4mmol",
+  cols_label(MeanWatt_4mmol = "Watt_4mmol",
+             sdwatt_4mmol = "",
              MeanHF_4mmol = "HF_4mmol",
-             sdHF_4mmol = "HF_4mmol")
+             sdHF_4mmol = "",
+             n = "Participants")
 ```
+
 
 ## Gjennomsnitt av deltakere
 
 ```{r}
+#| message: false
+#| warning: false
+#| echo: false
 #|tbl-cap: "Gjennomsnitt av deltakere, fordelt på kjønn, alder, høyde, vekt"
-library(readxl)
+
 lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
 View(lac_data)
 
@@ -105,6 +120,10 @@ lac_data %>%
 Fordeling basert på deltaker og kjønn. Basert på deres resultater ved pre- og post-testing.
 
 ```{r}
+#| message: false
+#| include: true
+#| warning: false
+#| echo: false
 lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
 View(lac_data)
 
@@ -117,7 +136,7 @@ lac_data %>%
   geom_point() 
 ```
 
-## Fordeling ved 4mmol/L
+## Differanse mellom pre og post ved 4mmol/L
 
 ### Watt
 
@@ -133,7 +152,7 @@ Gjennomsnittet for deltakerne var 160. Standardavviket var 4.32 og typical error
 #| echo: false
 
 lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
-lac_data %>%
+dat2 <- lac_data %>%
   select(FP, time, watt_4mmol, HF_4mmol) %>%
   pivot_wider(names_from = time, 
               values_from = c(watt_4mmol, HF_4mmol)) %>%
@@ -151,13 +170,13 @@ lac_data %>%
             hf.te = hf.s / sqrt(2), 
             watt.cv = 100 * (watt.te / watt.m), 
             hf.cv = 100 * (hf.te / hf.m), 
-            n = n())
+            n = n()) 
 
 ```
 
 # Diskusjon og reliabilitet
 
-Resultatet viste først «NA», fordi det lå «NA» i det eksisterende datasettet. Dette ble endret slik at resultat for watt ved 4mmol/L ble et standardavvik på 19,1, et gjennomsnitt på 176 og typical error på 13,5. Dersom resultatet omhandlet endringene i gjennomsnittet er under eller lik typical error, er ikke testen/resultatene til å stole på/reliable [@hopkins2000] (s.11). Ut fra dette utsagnet fra Hopkins (2000) kan vi si at våre resultater er til å stole på. Vi kan med fordel ha hatt en gjennomgang av testen med alle forsøkspersonene i forkant for å minske læringseffekten. Ut ifra Hopkins (2000) hadde flere forsøkspersoner i testen gitt et bedre resultat og testen kunne blitt mer reliabel [@hopkins2000] (s.10). Noen av studentene fikk unøyaktig målinger grunnet mangel på oksygenopptak, mangel på pulsbelte og feil med BIOSEN. Disse testresultatene ble ekskludert fra rapporten.
+Resultatet viste først «NA», fordi det lå «NA» i det eksisterende datasettet. Dette ble endret slik at resultat for differansen på watt ved 4mmol/L ble et standardavvik på 19,1, et gjennomsnitt på 176 og typical error på 13,5. Dersom resultatet omhandlet endringene i gjennomsnittet er under eller lik typical error, er ikke testen/resultatene til å stole på/reliable [@hopkins2000] (s.11). Ut fra dette utsagnet fra Hopkins (2000) kan vi si at våre resultater er til å stole på. Vi kan med fordel ha hatt en gjennomgang av testen med alle forsøkspersonene i forkant for å minske læringseffekten. Ut ifra Hopkins (2000) hadde flere forsøkspersoner i testen gitt et bedre resultat og testen kunne blitt mer reliabel [@hopkins2000] (s.10). Noen av studentene fikk unøyaktig målinger grunnet mangel på oksygenopptak, mangel på pulsbelte og feil med BIOSEN. Disse testresultatene ble ekskludert fra rapporten.
 
 ### Reliabilitet
 
