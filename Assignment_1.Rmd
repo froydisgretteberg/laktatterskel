@@ -9,7 +9,7 @@ bibliography: references.bib
 
 # Introduksjon
 
-Laktatterskel, også kjent som anaerob terskel er den høyeste arbeidsintensiteten der mengden laktat(også kalt melkesyre) som produseres og fjernes er lik. Under fysisk aktivitet frigjøres energi i kroppen både gjennom aerobe og anaerobe prosesser. Ved arbeid over en viss intensitet produseres også laktat i tillegg til energi, desto høyere intesitet, desto større er laktatproduksjonen.  
+Laktatterskel, også kjent som anaerob terskel er den høyeste arbeidsintensiteten der mengden laktat(også kalt melkesyre) som produseres og fjernes er lik. Under fysisk aktivitet frigjøres energi i kroppen både gjennom aerobe og anaerobe prosesser. Ved arbeid over en viss intensitet produseres også laktat i tillegg til energi, desto høyere intesitet, desto større er laktatproduksjonen [@dahl2005]. Laktatterskelen er altså den høyeste intensiteten en kan holde før konsentrasjonen av laktat overskrider fjerningen av laktat  
 
 Hensikten med denne oppgaven er å presentere målinger for reliabilitet av data innhentet på fysiologilab. Videre vil oppgaven ta for seg reliabilteten for reproduserbarhet i datavitenskap. Laktatterskel kan være en gunstig indikator for evnen til å yte maksimalt i utholdenhetsidretter. Testing av laktatterskel kan utføres på flere ulike måter, men mest brukt er måling ved 4mmol/L. Videre finnes det ulike måter å justere selve testingen, ved eksempelvis å utføre test på sykkel, tredemølle eller rulleski. Testen kan deretter påvirkes av lengde på intervall og lokasjon for hvor prøvene blir tatt[@faude2009].
 
