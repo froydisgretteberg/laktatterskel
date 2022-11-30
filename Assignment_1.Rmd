@@ -9,7 +9,11 @@ bibliography: references.bib
 
 # Introduksjon
 
+Laktatterskel, også kjent som anaerob terskel er den høyeste arbeidsintensiteten der mengden laktat(også kalt melkesyre) som produseres og fjernes er lik. Under fysisk aktivitet frigjøres energi i kroppen både gjennom aerobe og anaerobe prosesser. Ved arbeid over en viss intensitet produseres også laktat i tillegg til energi, desto høyere intesitet, desto større er laktatproduksjonen.  
+
 Hensikten med denne oppgaven er å presentere målinger for reliabilitet av data innhentet på fysiologilab. Videre vil oppgaven ta for seg reliabilteten for reproduserbarhet i datavitenskap. Laktatterskel kan være en gunstig indikator for evnen til å yte maksimalt i utholdenhetsidretter. Testing av laktatterskel kan utføres på flere ulike måter, men mest brukt er måling ved 4mmol/L. Videre finnes det ulike måter å justere selve testingen, ved eksempelvis å utføre test på sykkel, tredemølle eller rulleski. Testen kan deretter påvirkes av lengde på intervall og lokasjon for hvor prøvene blir tatt[@faude2009].
+
+
 
 Denne oppgaven tar for seg resultater som ble gjennomført via testing på sykkel, og vil fokusere på watt og hjertefrekvens ved 4mmol.
 
@@ -51,37 +55,6 @@ lac_data %>%
 
 # Resultater
 
-## Gjennomsnitt ved 4mmol/L
-
-Gjennomsnitt av resultatene ved 4mmol laktat. Laktat eller melkesyre i blodet refereres til mangel på oksygentilførsel til deler av kroppen under arbeid (Vinnes, 2022). Laktatterskel kan eksempelvis forklare hvilken intensitet du kan holde over en gitt periode, og unngå utmattelse.
-
-```{r}
-#| include: TRUE
-#| warning: FALSE
-#| echo: FALSE
-#| tbl-cap: "Gjennomsnitt ved 4mmol|L"
-
-library(readxl)
-lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
-View(lac_data)
-
-dat <- lac_data %>% 
-  
-group_by(time) %>% 
-summarise(MeanWatt_4mmol = mean (watt_4mmol, na.rm = TRUE),
-          sdwatt_4mmol = sprintf("(%.2f)", sd(watt_4mmol, na.rm = TRUE)),
-          MeanHF_4mmol = mean (HF_4mmol, na.rm = TRUE),
-          sdHF_4mmol = sprintf("(%.2f)", sd(HF_4mmol, na.rm = TRUE)), n = n())
-
-dat %>% 
-gt(caption = "Subjects") %>%
-  cols_label(MeanWatt_4mmol = "Watt_4mmol",
-             sdwatt_4mmol = "",
-             MeanHF_4mmol = "HF_4mmol",
-             sdHF_4mmol = "",
-             n = "Participants")
-```
-
 
 ## Gjennomsnitt av deltakere
 
@@ -114,6 +87,42 @@ lac_data %>%
              n = "Participants",
              sex = "Sex")
 ```
+
+
+## Gjennomsnitt ved 4mmol/L
+
+Gjennomsnitt av resultatene ved 4mmol laktat. Laktat eller melkesyre i blodet refereres til mangel på oksygentilførsel til deler av kroppen under arbeid (Vinnes, 2022). Laktatterskel kan eksempelvis forklare hvilken intensitet du kan holde over en gitt periode, og unngå utmattelse.
+
+```{r}
+#| include: TRUE
+#| warning: FALSE
+#| echo: FALSE
+#| tbl-cap: "Gjennomsnitt ved 4mmol|L"
+
+library(readxl)
+lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
+View(lac_data)
+
+dat <- lac_data %>% 
+group_by(time) %>%
+mutate(time = factor(time, levels = 
+                  c("pre", "post"))) %>% 
+summarise(MeanWatt_4mmol = mean (watt_4mmol, na.rm = TRUE),
+          sdwatt_4mmol = sprintf("(%.2f)", sd(watt_4mmol, na.rm = TRUE)),
+          MeanHF_4mmol = mean (HF_4mmol, na.rm = TRUE),
+          sdHF_4mmol = sprintf("(%.2f)", sd(HF_4mmol, na.rm = TRUE)), n = n())
+  
+
+dat %>% 
+gt(caption = "Subjects") %>%
+  cols_label(time = "Timepoint",
+             MeanWatt_4mmol = "Watt 4mmol",
+             sdwatt_4mmol = "",
+             MeanHF_4mmol = "HF 4mmol",
+             sdHF_4mmol = "",
+             n = "Participants")
+```
+
 
 ## Watt ved 4mmol/L
 
@@ -152,6 +161,7 @@ Gjennomsnittet for deltakerne var 160. Standardavviket var 4.32 og typical error
 #| echo: false
 
 lac_data <- read_excel("data/lac_data.xlsx", na = "NA")
+
 dat2 <- lac_data %>%
   select(FP, time, watt_4mmol, HF_4mmol) %>%
   pivot_wider(names_from = time, 
@@ -162,15 +172,27 @@ dat2 <- lac_data %>%
   
   group_by() %>%
   
-  summarise(watt.s = sd(watt_diff, na.rm = TRUE), 
+  summarise(watt.m = mean(c(watt_4mmol_pre, watt_4mmol_post), na.rm = TRUE),
+            watt.s = sd(watt_diff, na.rm = TRUE),
+            watt.te = watt.s / sqrt(2),
+            watt.cv = 100 * (watt.te / watt.m),
+            hf.m = mean(c(HF_4mmol_pre, HF_4mmol_post), na.rm = TRUE),
             hf.s = sd(hf_diff, na.rm = TRUE),
-            watt.m = mean(c(watt_4mmol_pre, watt_4mmol_post), na.rm = TRUE), 
-            hf.m = mean(c(HF_4mmol_pre, HF_4mmol_post), na.rm = TRUE), 
-            watt.te = watt.s / sqrt(2), 
             hf.te = hf.s / sqrt(2), 
-            watt.cv = 100 * (watt.te / watt.m), 
             hf.cv = 100 * (hf.te / hf.m), 
             n = n()) 
+
+dat2 %>% 
+  gt() %>% 
+  cols_label(watt.m = "Avg watt",
+             watt.s = "SD watt",
+             watt.te = "Watt typical error",
+             watt.cv = "Watt coefficience variance",
+             hf.m = "Avg HR",
+             hf.s = "SD HR",
+             hf.te = "HR typical error",
+             hf.cv = "HR coefficience variance") %>% 
+  tab_footnote(footnote = "SD = Standard deviation; HR = heart rate")
 
 ```
 
@@ -180,12 +202,15 @@ Resultatet viste først «NA», fordi det lå «NA» i det eksisterende datasett
 
 ### Reliabilitet
 
-Ut fra Hopkins (2000) kan det tenkes at de to viktigste synspunktene for feil ved måling er validiteten underveis i testen og pålitelighet til eventuelle retester [@hopkins2000] (s.1). I tillegg uttaler Hopkins (2000) at de viktigste målingene etter en test er typiske feil, også kalt typical error, og endringene i gjennomsnittet mellom hver test (pre -- post) [\@hopkins2000](s.10).  Videre påpeker Hopkins (2000) at det er tre måter å måle reliabiliteten på; «within-subject variation», «change in the mean» og «retest correlation». Måling av påliteligheten av en test kan gjøres ved å utføre testen et bestemt antall ganger på et bestemt antall forsøkspersoner. Desto mindre feil en test har, jo mer målbart er den [@hopkins2000] (s.2). 
+Ut fra @hopkins2000 kan det tenkes at de to viktigste synspunktene for feil ved måling er validiteten underveis i testen og pålitelighet til eventuelle retester [@hopkins2000]. I tillegg uttaler Hopkins at de viktigste målingene etter en test er typiske feil, også kalt typical error, og endringene i gjennomsnittet mellom hver test (pre -- post) [@hopkins2000]. Videre påpeker Hopkins (2000) at det er tre måter å måle reliabiliteten på; «within-subject variation», «change in the mean» og «retest correlation». Måling av påliteligheten av en test kan gjøres ved å utføre testen et bestemt antall ganger på et bestemt antall forsøkspersoner. Desto mindre feil en test har, jo mer målbart er den [@hopkins2000].
 
 #### [Hvilke mål av reliabilitet har vi brukt?]{.underline}
 
-Vi har tatt i bruk metodene fra Hopkins (2000) for å måle reliabiliteten. Den ene metoden vi har brukt kalles «within-subject variation». Denne metoden omhandler tilfeldige variasjoner og det finnes statistikk som fanger opp disse tilfeldige variasjonene av enkeltpersoners resultater i en retestet test. Dette omtales ofte som standardavvik og representerer typical error, i en måling [@hopkins2000] (s. 2). Utregningen av typical error gjøres ved å dele standardavviket på kvadratroten av 2 [\@hopkins2000](s.%203). Det finnes ulike typer kilder til typical error i en måling, derav biologiske faktorer. Forsøkspersonene kan ha ulik fysisk- og mental tilstand under de ulike testene som kan være med på å påvirke resultatet.  Hopkins (2000) påpeker også at det er ideelt at det i en test er mange forsøkspersoner og få prøver/re-tester [\@hopkins2000](s.%202). 
+Vi har tatt i bruk metodene fra @hopkins2000 for å måle reliabiliteten. Den ene metoden vi har brukt kalles «within-subject variation». Denne metoden omhandler tilfeldige variasjoner og det finnes statistikk som fanger opp disse tilfeldige variasjonene av enkeltpersoners resultater i en retestet test. Dette omtales ofte som standardavvik og representerer typical error, i en måling [@hopkins2000] (s. 2). Utregningen av typical error gjøres ved å dele standardavviket på kvadratroten av 2 [@hopkins2000] (s.%203). Det finnes ulike typer kilder til typical error i en måling, derav biologiske faktorer. Forsøkspersonene kan ha ulik fysisk- og mental tilstand under de ulike testene som kan være med på å påvirke resultatet. Hopkins påpeker også at det er ideelt at det i en test er mange forsøkspersoner og få prøver/re-tester [@hopkins2000].
 
-Den andre metoden vi har brukt omhandler endring av gjennomsnittet. Endringene kan både være tilfeldige endringer eller systematiske endringer. Hopkins (2000) forteller at systematiske endringer i gjennomsnittet kan påvirkes av forsøkspersonenes økte læringseffekt fra første til andre gjennomføring av testen. Videre påpeker Hopkins (2000) at det er ideelt å utføre nok tester slik at læringseffekten eller andre systematiske endringer blir ubetydelig før intervensjonen. De systematiske endringene i gjennomsnittet kan påvirke enkeltindividers resultat som igjen kan øke typical error [\@hopkins2000](s.%205). Det er dermed viktig med god planlegging før en test for å eliminere så mye som mulig av læringseffekten. Det er flere faktorer som kan påvirke resultatene, hvor blant annet forsøkspersonenes motivasjon kan påvirke resultatene ved at de enten får mer eller mindre motivasjon. De kan også få en opplevelse av fatigue fra forrige test som kan være med å påvirke resultatene [\@hopkins2000](s.%205). Ulike testledere, ulikt utstyr og ulike omgivelser er også faktorer som kan påvirke resultatene [\@hopkins2000](s.%202). 
+Den andre metoden vi har brukt omhandler endring av gjennomsnittet. Endringene kan både være tilfeldige endringer eller systematiske endringer. Hopkins (2000) forteller at systematiske endringer i gjennomsnittet kan påvirkes av forsøkspersonenes økte læringseffekt fra første til andre gjennomføring av testen. Videre påpeker Hopkins (2000) at det er ideelt å utføre nok tester slik at læringseffekten eller andre systematiske endringer blir ubetydelig før intervensjonen. De systematiske endringene i gjennomsnittet kan påvirke enkeltindividers resultat som igjen kan øke typical error [@hopkins2000]. Det er dermed viktig med god planlegging før en test for å eliminere så mye som mulig av læringseffekten. Det er flere faktorer som kan påvirke resultatene, hvor blant annet forsøkspersonenes motivasjon kan påvirke resultatene ved at de enten får mer eller mindre motivasjon. De kan også få en opplevelse av fatigue fra forrige test som kan være med å påvirke resultatene. Ulike testledere, ulikt utstyr og ulike omgivelser er også faktorer som kan påvirke resultatene .
 
-Til slutt har vi metoden omhandlet retesting. Hopkins (2000) viser til tanken om å utføre testen to ganger på ulik tid på samme forsøksperson, for å finne ut om resultatet er tilnærmet likt [\@hopkins2000](s.%206). Desto nærmere resultatene er, jo mer reliabel er testen. 
+Til slutt har vi metoden omhandlet retesting. Hopkins (2000) viser til tanken om å utføre testen to ganger på ulik tid på samme forsøksperson, for å finne ut om resultatet er tilnærmet likt [@hopkins2000]. Desto nærmere resultatene er, jo mer reliabel er testen.
+
+# References
+
